@@ -6,10 +6,6 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class Back {
-	// static int [] coord=new int[2];
-	public static void main(String[] args) {
-		inicio();
-	}
 	/*
 	 * Variables: solar: El solar original solop: Copia auxiliar del solar para
 	 * comparar con el original y saber si existe una mejor solucion baldosas: Array
@@ -19,16 +15,14 @@ public class Back {
 	 * 
 	 */
 
-	public static void inicio() {
+	public static void inicio(int[][] solar,ArrayList<Integer> baldosas ) {
 
-		int[][] solar = VorazBacktrack.generarSolar(6);
-		Integer[] ba = new Integer[] { 2, 1, 3 };
-		ArrayList<Integer> baldosas = new ArrayList<>(Arrays.asList(ba));
 
 		int[] bald = new int[baldosas.size()];
 		int[] baldop = new int[baldosas.size()];
 		int[][] solop = solar.clone();
 		back(solar, solop, baldosas, bald, baldop);
+		
 	}
 
 	public static void back(int solar[][], int[][] solop, ArrayList<Integer> baldosas, int[] bald, int[] baldop) {

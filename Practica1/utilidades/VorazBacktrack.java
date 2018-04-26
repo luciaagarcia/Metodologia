@@ -16,39 +16,62 @@ public class VorazBacktrack {
 
 		System.out.println("\nIntroduzca el tamaño del lado del solar:");
 		int tamSol = teclado.nextInt();
-		int[][] solar = generarSolar(tamSol);
+		int[][] origSolar = generarSolar(tamSol);
 
-		ArrayList<Integer> baldosas = generarBaldosas(teclado);
+		ArrayList<Integer> OrigBald = generarBaldosas(teclado);
 		System.out.println("Tamaño del solar: " + tamSol + "m de lado, baldosas disponibles: ");
-		for (int i = baldosas.size() - 1; i >= 0; i--)
-			System.out.print(baldosas.get(i) + ", ");
+		for (int i = OrigBald.size() - 1; i >= 0; i--)
+			System.out.print(OrigBald.get(i) + ", ");
 		System.out.println("");
 
-		System.out.println("Que algoritmo desea?\n1.Voraz \n2.Backtracking");
-		int opt = teclado.nextInt();
-		switch (opt) {
-		case 1:
-			Voraces.algVoraz(solar, baldosas);
-			System.out.println("Usar ahora backtracking?: ");
-			if(teclado.nextInt()==1) {
-				//backtracking
-			}
-			break;
-		case 2:
-			
-			break;
-		}
-		mostSolar(solar);
+		System.out.println("Algoritmo voraz: ");
+		int [][] solVo=generarSolar(tamSol);
+		ArrayList<Integer>balVo=(ArrayList<Integer>) OrigBald.clone();
+		
+		long tv0 = obtenerTiempo('n');
+		Voraces.algVoraz(solVo, balVo);
+		long tv1 = obtenerTiempo('n');
+		mostSolar(solVo);
+		
+		
+		
+		System.out.println("\n--------\nAlgoritmo backtracking: ");
+		int [][] solBa=generarSolar(tamSol);
+		ArrayList<Integer>balBa=(ArrayList<Integer>) OrigBald.clone();
+		
+		long tb0 = obtenerTiempo('n');
+		Back.inicio(solBa, balBa);
+		long tb1 = obtenerTiempo('n');
+		System.out.println("La buena:");
+		mostSolar(solBa);
+		System.out.println("  Voraz: "+(tv1-tv0)+" ns	|  Backtracking: "+(tb1-tb0)+" ns");
+
+
+		
+
 	}
-	
+
 	/*
 	 * 
-	 *-------------------------- Metodos comunes a los dos algoritmos ---------------------------
+	 * -------------------------- Metodos comunes a los dos algoritmos
+	 * ---------------------------
 	 * 
 	 */
-	
-	//----------------- Modificacion del solar ------------
-	
+
+	static long obtenerTiempo(char medida) {
+		long tiempo = 0;
+
+		if (medida == 'n' || medida == 'N') {
+			tiempo = System.nanoTime();
+		} else if (medida == 'm' || medida == 'M') {
+			tiempo = System.currentTimeMillis();
+
+		}
+		return tiempo;
+	}
+
+	// ----------------- Modificacion del solar ------------
+
 	public static void rellenarBald(int ix, int jy, int[][] solar, int baldAct) {
 		if (Back.comprobarAdy(ix, jy, solar, baldAct)) {
 			for (int i = ix; i <= baldAct + ix - 1; i++) {
@@ -58,7 +81,7 @@ public class VorazBacktrack {
 			}
 		}
 	}
-	
+
 	public static int rellenarBald(int ix, int jy, int[][] solar, int baldAct, int contbal) {
 		if (Voraces.comprobarAdy(ix, jy, solar, baldAct)) {
 			for (int i = ix; i <= baldAct + ix - 1; i++) {
@@ -70,10 +93,8 @@ public class VorazBacktrack {
 		}
 		return contbal;
 	}
-	
-	
-	
-	//----------------- Generacion y muestra --------------
+
+	// ----------------- Generacion y muestra --------------
 	public static ArrayList<Integer> generarAut(Scanner teclado) {
 		System.out.print("Introduzca tamaño de la baldosa mas grande: ");
 		int tamMax = teclado.nextInt();
@@ -95,7 +116,7 @@ public class VorazBacktrack {
 		Collections.sort(bald);
 		return bald;
 	}
-	
+
 	public static void mostSolar(int[][] solar) {
 		for (int i = 0; i < solar.length; i++) {
 			for (int j = 0; j < solar.length; j++) {
