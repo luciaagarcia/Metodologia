@@ -125,17 +125,11 @@ public class Back {
 	public static boolean comprobarAdy(int x, int y, int [][] solar, int baldAct) {
 		int contadorx = 0;
 		int contadory = 0;
-		boolean vacio = true;
+		int i = x, j = y; //guardar posicion inicial
+		boolean vacio = false;
 		boolean limite = false;
 
-		for (int i = x; i < baldAct  ; i++) {
-			for (int j = y; j < baldAct  ; j++) {
-				if (solar[i][j] != 0) {
-					vacio = false;
-				}
-			}
-		}
-		/*while (i < solar.length && !limite) {
+		while (i < solar.length && !limite) {
 			if (solar[i++][y] != 0)
 				limite = true;
 			else
@@ -151,7 +145,7 @@ public class Back {
 		}
 		if (contadorx >= baldAct && contadory >= baldAct)
 			vacio = true;
-*/
+
 		return vacio;
 	}
 
