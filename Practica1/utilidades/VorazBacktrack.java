@@ -49,6 +49,27 @@ public class VorazBacktrack {
 	
 	//----------------- Modificacion del solar ------------
 	
+	public static void rellenarBald(int ix, int jy, int[][] solar, int baldAct) {
+		if (Back.comprobarAdy(ix, jy, solar, baldAct)) {
+			for (int i = ix; i <= baldAct + ix - 1; i++) {
+				for (int j = jy; j <= baldAct + jy - 1; j++) {
+					solar[i][j] = baldAct;
+				}
+			}
+		}
+	}
+	
+	public static int rellenarBald(int ix, int jy, int[][] solar, int baldAct, int contbal) {
+		if (Voraces.comprobarAdy(ix, jy, solar, baldAct)) {
+			for (int i = ix; i <= baldAct + ix - 1; i++) {
+				for (int j = jy; j <= baldAct + jy - 1; j++) {
+					solar[i][j] = baldAct;
+				}
+			}
+			contbal = contbal + 1;
+		}
+		return contbal;
+	}
 	
 	
 	

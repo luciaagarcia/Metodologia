@@ -40,8 +40,8 @@ public class Back {
 				VorazBacktrack.mostSolar(solar);
 				System.out.println(
 						"El numero de baldosas utilizadas es: " + contadorbaldosas(bald) + "\n-----------------");
-
 				solop = solar.clone();
+				
 				System.arraycopy(bald, 0, baldop, 0, bald.length);
 			}
 			// mostSolar(sol);
@@ -50,10 +50,10 @@ public class Back {
 		else {
 			for (i = 0; i < baldosas.size(); i++) {
 				if (posible(solar, baldosas.get(i), coord)) {
-					colocar(solar, baldosas.get(i), coord[0], coord[1]);
+					VorazBacktrack.rellenarBald(coord[0],coord[1],solar, baldosas.get(i));
 					bald[i]++;
 					back(solar, solop, baldosas, bald, baldop);
-					borrar(solar, baldosas.get(i), coord[0], coord[1]);
+					borrar( coord[0], coord[1],solar, baldosas.get(i));
 					bald[i]--;
 				}
 			}
@@ -125,7 +125,7 @@ public class Back {
 	public static boolean comprobarAdy(int x, int y, int [][] solar, int baldAct) {
 		int contadorx = 0;
 		int contadory = 0;
-		int i = x, j = y; //guardar posicion inicial
+		int i = x, j = y;
 		boolean vacio = false;
 		boolean limite = false;
 
@@ -149,16 +149,10 @@ public class Back {
 		return vacio;
 	}
 
-	public static void colocar(int sol[][], int dimesionbaldosa, int x, int y) {
-		for (int i = x; i < x + dimesionbaldosa; i++)
-			for (int j = y; j < y + dimesionbaldosa; j++)
-				sol[i][j] = dimesionbaldosa;
-	}
-
-	public static void borrar(int sol[][], int dimensionbaldosa, int x, int y) {
-		for (int i = x; i < x + dimensionbaldosa; i++)
-			for (int j = y; j < y + dimensionbaldosa; j++)
-				sol[i][j] = 0;
+	public static void borrar(int y, int x, int [][] solar, int baldAct) {
+		for (int i = x; i < x + baldAct; i++)
+			for (int j = y; j < y + baldAct; j++)
+				solar[i][j] = 0;
 	}
 
 }

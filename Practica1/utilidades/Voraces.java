@@ -14,7 +14,7 @@ public class Voraces {
 			for (int i = 0; i < solar.length; i++) {
 				for (int j = 0; j < solar.length; j++) {
 					if ((solar[i][j] == 0) && (baldAct <= (solar.length - i)) && (baldAct <= (solar.length - j))) {
-						contbal=rellenarBald(i, j, solar, baldAct, contbal);
+						contbal=VorazBacktrack.rellenarBald(i, j, solar, baldAct, contbal);
 					}
 				}
 			}
@@ -23,17 +23,7 @@ public class Voraces {
 		}
 	}
 
-	public static int rellenarBald(int ix, int jy, int[][] solar, int baldAct, int contbal) {
-		if (comprobarAdy(ix, jy, solar, baldAct)) {
-			for (int i = ix; i <= baldAct + ix - 1; i++) {
-				for (int j = jy; j <= baldAct + jy - 1; j++) {
-					solar[i][j] = baldAct;
-				}
-			}
-			contbal = contbal + 1;
-		}
-		return contbal;
-	}
+
 
 	public static boolean comprobarAdy(int ix, int jy, int[][] solar, int baldAct) {
 		boolean vacio = true;
