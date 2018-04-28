@@ -1,152 +1,141 @@
 package utilidades;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Scanner;
+public class back {
 
-public class Back {
-	/*
-	 * Variables: solar: El solar original solop: Copia auxiliar del solar para
-	 * comparar con el original y saber si existe una mejor solucion baldosas: Array
-	 * que contiene los tamaños disponibles de baldosas bald: Baldosas usadas para
-	 * completar el solar baldop: Copia auxiliar de las baldosas usadas para
-	 * comparar con la original y saber si existe una mejor solucion.
-	 * 
-	 */
-
-	public static void inicio(int[][] solar,ArrayList<Integer> baldosas ) {
-
-
-		int[] bald = new int[baldosas.size()];
-		int[] baldop = new int[baldosas.size()];
-		int[][] solop = solar.clone();
-		back(solar, solop, baldosas, bald, baldop);
+	public void inicio(int [][] solar, int [] baldosas) {
 		
+		int [] baldUs= new int [baldosas.length];
+		int[] baldMejor = new int[baldosas.length];
+		int[][] solMejor = Metodos.generarSolar(solar.length);
+		
+		backtraking(solar, solMejor, baldosas, baldUs,baldMejor);
+		mostSolar(solMejor);
+
 	}
 
-	public static void back(int solar[][], int[][] solop, ArrayList<Integer> baldosas, int[] bald, int[] baldop) {
-		int i;
-		int[] coord = new int[2];
-		if (solucion(solar, baldosas)) {
-			if ((libre(solar)) && contadorbaldosas(bald) < contadorbaldosas(baldop) || contadorbaldosas(baldop) == 0) {
+	public void backtraking(int[][] solar, int [][] solMejor, int[] baldosas, int []baldUs, int[] baldMejor) {
+		int posicion[] = new int[2];
 
-				VorazBacktrack.mostSolar(solar);
-				System.out.println(
-						"El numero de baldosas utilizadas es: " + contadorbaldosas(bald) + "\n-----------------");
-				solop = solar.clone();
-				
-				System.arraycopy(bald, 0, baldop, 0, bald.length);
+		// Caso base. Si lo ha completado, lo muestra
+
+		if (completado(solar)) {
+			if (numBald(baldUs) < numBald(baldMejor)) {//Hay que arreglar esto hulia, pero creo que ya lo tengo
+				cambSolar(solar, solMejor, baldUs, baldMejor);
 			}
-			// mostSolar(sol);
+			mostSolar(solMejor);
+
 		}
 
 		else {
-			for (i = 0; i < baldosas.size(); i++) {
-				if (posible(solar, baldosas.get(i), coord)) {
-					VorazBacktrack.rellenarBald(coord[0],coord[1],solar, baldosas.get(i));
-					bald[i]++;
-					back(solar, solop, baldosas, bald, baldop);
-					borrar( coord[0], coord[1],solar, baldosas.get(i));
-					bald[i]--;
+
+			for (int i = 0; i < baldosas.length; i++) {
+				if (cabeBack(i, posicion, baldosas, solar)) {
+					ponerBack(posicion[0], posicion[1], i, baldosas, solar, baldUs);
+					backtraking(solar, solMejor, baldosas, baldUs, baldMejor);
+					quitar(posicion[0], posicion[1], i, baldosas, solar, baldUs);
 				}
 			}
 		}
+		
+	}
+	
+	public void cambSolar(int [][] solar, int [][] solMejor, int [] baldUs, int [] baldMejor){
+		for (int i=0; i<solar.length;i++){
+			for(int j=0;j<solar.length;j++){
+				solMejor[i][j]=solar[i][j];
+			}
+		}
+		for(int i=0;i<baldUs.length;i++){
+			baldMejor[i]=baldUs[i];
+		}
+	}
+	
+	
+	public int  numBald(int [] bald) {
+		int total=0;
+		for(int i=0; i<bald.length;i++) {
+			total+=bald[i];
+		}
+		
+		return total;
+	}
+	
+	public static void mostSolar(int[][] solar) {
+		for (int i = 0; i < solar.length; i++) {
+			for (int j = 0; j < solar.length; j++) {
+				System.out.print(solar[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println("\n-------------");
+	}
+	public void quitar(int i, int j, int t, int [] baldosas, int [][]solar, int[] baldUs) {
+		
+		int a, b = 0;
+		for (a = i; a < baldosas[t] + i; a++) {
+			for (b = j; b < baldosas[t] + j; b++) {
+				solar[a][b]= 0;
+			}
+		}
+
+		baldUs[t] -= 1;
+
+
 	}
 
-	public static boolean solucion(int solar[][], ArrayList<Integer> baldosas) {
-		boolean complete = true;
-		for (int i = 0; i < solar.length && complete; i++) {
-			for (int j = 0; j < solar[i].length && complete; j++) {
-				if (solar[i][j] == 0) {
-					// Este for lo que hace es volver a comprobar si hay huecos con el tamaño de
-					// baldosa que disponemos
-					for (int k = 0; k < baldosas.size() && complete; k++) {
-						if (comprobarAdy(i,j,solar, baldosas.get(k))) {
-							complete = false;
+	public boolean cabeBack(int t, int[] posicion, int[] baldosas, int solar[][]) {
+		boolean cabe = false;
+		boolean parar = false;
+
+		for (int i = 0; i < solar.length && !parar; i++) {
+			for (int j = 0; j < solar.length && !parar; j++) {
+				// compruebo q el primer eleme es 0 y q no se sale de la dimensio del solar
+				if (solar[i][j] == 0 && (solar.length - j) >= baldosas[t] && (solar.length - i) >= baldosas[t]) {
+					// compruebo todas las posicions q ocupara la baldosa estan a 0
+					for (int a = i; a <= (baldosas[t] + i) - 1; a++) {
+						for (int b = j; b <= (baldosas[t] + j) - 1; b++) {
+							if (solar[a][b] != 0) {
+								a = baldosas[t] + i + 1;
+								b = baldosas[t] + j + 1;
+								cabe = false;
+
+							} else {
+								cabe = true;
+								posicion[0] = i;
+								posicion[1] = j;
+								parar = true;
+
+							}
 						}
 					}
 				}
 			}
 		}
-		return complete;
+		return cabe;
 	}
 
-	public static boolean libre(int[][] sol) {
-		int contador = 0;
-		for (int i = 0; i < sol.length; i++) {
-			for (int j = 0; j < sol[i].length; j++) {
-				if (sol[i][j] == 0) {
-					contador++;
+	public void ponerBack(int i, int j, int t, int[] baldosas, int[][] solar, int[] baldUs) {
+		int a, b = 0;
+		for (a = i; a < baldosas[t] + i; a++) {
+			for (b = j; b < baldosas[t] + j; b++) {
+				solar[a][b] = baldosas[t];
+			}
+		}
+		baldUs[t] += 1;
+	}
+
+	// Metodo que comprueba si se ha completado el solar
+	public boolean completado(int[][] solar) {
+		boolean exito = true;
+		for (int f = 0; f < solar.length; f++) {
+			for (int c = 0; c < solar.length; c++) {
+				if (solar[f][c] == 0) {
+					exito = false;
+					c = f = solar.length;
 				}
 			}
 		}
-		return (contador == 0);
-	}
-
-	public static int contadorbaldosas(int matriz[]) {
-		int amount = 0;
-		for (int i = 0; i < matriz.length; i++) {
-			amount += matriz[i];
-		}
-		return amount;
-	}
-
-	public static void copiar(int[][] sol, int[][] solop) {
-		for (int i = 0; i < sol.length; i++) {
-			for (int j = 0; j < sol[i].length; j++) {
-				solop[i][j] = sol[i][j];
-			}
-		}
-	}
-
-	public static boolean posible(int solar[][], int baldAct, int cell[]) {
-		boolean found = false;
-		for (int i = 0; i < solar.length && !found; i++) {
-			for (int j = 0; j < solar[i].length && !found; j++) {
-				if (solar[i][j] == 0) {
-					if (comprobarAdy(i,j,solar, baldAct)) {
-						found = true;
-						cell[0] = i;
-						cell[1] = j;
-					}
-				}
-			}
-		}
-		return found;
-	}
-
-	public static boolean comprobarAdy(int x, int y, int [][] solar, int baldAct) {
-		int contadorx = 0;
-		int contadory = 0;
-		int i = x, j = y;
-		boolean vacio = false;
-		boolean limite = false;
-
-		while (i < solar.length && !limite) {
-			if (solar[i++][y] != 0)
-				limite = true;
-			else
-				contadorx++;
-		}
-
-		while (j < solar[x].length && !limite) {
-			if (solar[x][j++] != 0)
-				limite = true;
-			else
-				contadory++;
-
-		}
-		if (contadorx >= baldAct && contadory >= baldAct)
-			vacio = true;
-
-		return vacio;
-	}
-
-	public static void borrar(int y, int x, int [][] solar, int baldAct) {
-		for (int i = x; i < x + baldAct; i++)
-			for (int j = y; j < y + baldAct; j++)
-				solar[i][j] = 0;
+		return exito;
 	}
 
 }
