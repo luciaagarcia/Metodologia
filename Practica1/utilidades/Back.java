@@ -7,22 +7,21 @@ public class back {
 		int [] baldUs= new int [baldosas.length];
 		int[] baldMejor = new int[baldosas.length];
 		int[][] solMejor = Metodos.generarSolar(solar.length);
-		
-		backtraking(solar, solMejor, baldosas, baldUs,baldMejor);
+		int contSol=0;
+		backtraking(solar, solMejor, baldosas, baldUs,baldMejor, contSol);
 		mostSolar(solMejor);
-
 	}
 
-	public void backtraking(int[][] solar, int [][] solMejor, int[] baldosas, int []baldUs, int[] baldMejor) {
+	public void backtraking(int[][] solar, int [][] solMejor, int[] baldosas, int []baldUs, int[] baldMejor, int contSol) {
 		int posicion[] = new int[2];
 
 		// Caso base. Si lo ha completado, lo muestra
 
 		if (completado(solar)) {
-			if (numBald(baldUs) < numBald(baldMejor)) {//Hay que arreglar esto hulia, pero creo que ya lo tengo
+			contSol++;
+			if ((contSol == 1) || (contSol > 1 &&(numBald(baldUs) < numBald(baldMejor)))) {//Hay que arreglar esto hulia, pero creo que ya lo tengo
 				cambSolar(solar, solMejor, baldUs, baldMejor);
 			}
-			mostSolar(solMejor);
 
 		}
 
@@ -31,7 +30,7 @@ public class back {
 			for (int i = 0; i < baldosas.length; i++) {
 				if (cabeBack(i, posicion, baldosas, solar)) {
 					ponerBack(posicion[0], posicion[1], i, baldosas, solar, baldUs);
-					backtraking(solar, solMejor, baldosas, baldUs, baldMejor);
+					backtraking(solar, solMejor, baldosas, baldUs, baldMejor, contSol);
 					quitar(posicion[0], posicion[1], i, baldosas, solar, baldUs);
 				}
 			}
