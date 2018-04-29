@@ -1,25 +1,31 @@
 package utilidades;
 
 public class back {
-
+	int [][] solar;
+	int contSol=0;
 	public void inicio(int [][] solar, int [] baldosas) {
-		
 		int [] baldUs= new int [baldosas.length];
 		int[] baldMejor = new int[baldosas.length];
+		for(int i=0; i<baldMejor.length;i++)baldMejor[i]=999;
 		int[][] solMejor = Metodos.generarSolar(solar.length);
-		int contSol=0;
-		backtraking(solar, solMejor, baldosas, baldUs,baldMejor, contSol);
-		mostSolar(solMejor);
+		backtraking(solar, solMejor, baldosas, baldUs,baldMejor);
+		if(contSol==0) {
+			System.out.println("No se ha encontrado una solucion");
+		}else{
+			System.out.println("Esta es la mejor opcion de un total de "+contSol+" soluciones:");
+			mostSolar(solMejor);
+		}
 	}
 
-	public void backtraking(int[][] solar, int [][] solMejor, int[] baldosas, int []baldUs, int[] baldMejor, int contSol) {
+	public void backtraking(int[][] solar, int [][] solMejor, int[] baldosas, int []baldUs, int[] baldMejor) {
 		int posicion[] = new int[2];
 
 		// Caso base. Si lo ha completado, lo muestra
 
 		if (completado(solar)) {
 			contSol++;
-			if ((contSol == 1) || (contSol > 1 &&(numBald(baldUs) < numBald(baldMejor)))) {//Hay que arreglar esto hulia, pero creo que ya lo tengo
+			if ((contSol > 0 &&(numBald(baldUs) < numBald(baldMejor)))) {//Hay que arreglar esto hulia, pero creo que ya lo tengo
+				System.out.println("Reduciendo de "+numBald(baldMejor)+ " a "+numBald(baldUs) +" baldosas");
 				cambSolar(solar, solMejor, baldUs, baldMejor);
 			}
 
@@ -30,7 +36,7 @@ public class back {
 			for (int i = 0; i < baldosas.length; i++) {
 				if (cabeBack(i, posicion, baldosas, solar)) {
 					ponerBack(posicion[0], posicion[1], i, baldosas, solar, baldUs);
-					backtraking(solar, solMejor, baldosas, baldUs, baldMejor, contSol);
+					backtraking(solar, solMejor, baldosas, baldUs, baldMejor);
 					quitar(posicion[0], posicion[1], i, baldosas, solar, baldUs);
 				}
 			}
